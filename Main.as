@@ -19,7 +19,8 @@ GxLight@ GetLight(CTrackMania@ App)
 	}
 	return null;
 }
-void Main() {
+void Main() 
+{
 	auto App = GetApp();
 	int Hue = 0;
 	while (true) 
