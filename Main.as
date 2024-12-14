@@ -1,66 +1,44 @@
-CTrackMania@ g_app;
-CGameCtnChallenge@ GetCurrentMap()
+GxLight@ GetLight(CTrackMania@ App)
 {
-	return g_app.RootMap;
+	ISceneVis@ GameScene = App.GameScene;
+	if (GameScene !is null)
+	{
+		CScene@ HackScene = GameScene.HackScene;
+		if (HackScene !is null)
+		{
+			CSceneLight@ SceneLight = HackScene.Lights[0];
+			if (SceneLight !is null)
+			{
+				GxLight@ Light = SceneLight.Light;
+				if (Light !is null)
+				{
+					return Light;
+				}
+			}
+		}
+	}
+	return null;
 }
-vec3 lightColor = vec3(255,0,0);
-
 void Main() {
-	@g_app = cast<CTrackMania>(GetApp());
-	int i = 0;
+	auto App = GetApp();
+	int Hue = 0;
 	while (true) 
 	{
-		print(menub);
-		if(menub)
+		GxLight@ Light = GetLight(App);
+		if (Light !is null)
 		{
-        		i++;
-            		ISceneVis@ sceneVis = g_app.GameScene;
-            		if(sceneVis !is null)
-			{
-                		CScene@ hackScene = sceneVis.HackScene;
-                		if(hackScene !is null)
-				{
-                    			CSceneLight@ sceneLight = hackScene.Lights[0];
-                    			if(sceneLight !is null)
-					{
-                        			GxLight@ light = sceneLight.Light;
-                        			if(light !is null){
-                            				if(i>255) i = 0;
-                            				vec3 lightColor = UI::HSV(i, 0.78, 0.78);
-                            				light.Color = lightColor;
-                        			}
-                    			}
-                		}
-            		}
-        	}
-		else
-		{
-	        	ISceneVis@ sceneVis = g_app.GameScene;
-	        	if(sceneVis !is null)
-			{
-	                	CScene@ hackScene = sceneVis.HackScene;
-	        		if(hackScene !is null)
-				{
-	                    		CSceneLight@ sceneLight = hackScene.Lights[0];
-	                    		if(sceneLight !is null)
-					{
-	                			GxLight@ light = sceneLight.Light;
-	                        		if(light !is null)
-						{
-	                            			light.Color = vec3(1,1,1);
-	                        		}
-	                    		}
-	                	}
-	            	}
-	        }
+			if (Hue > 255) Hue = 0;
+			vec3 LightColor = UI::HSV(i / 255, 0.78, 0.78);
+			Light.Color = Enabled ? LightColor : vec3(1, 1, 1);
+		}
 		yield();
 	}
 }
 
-bool menub = false;
+bool Enabled = false;
 void RenderMenu()
 {
-    if(UI::MenuItem((menub ? "\\$ff0"+ Icons::Star + "\\$z Disable" : Icons::StarO + " Enable") + " Starman effect", "", menub)) {
-        menub = !menub;
+    if(UI::MenuItem((Enabled ? "\\$ff0" + Icons::Star + "\\$z Disable" : Icons::StarO + " Enable") + " Starman effect", "", Enabled)) {
+        Enabled = !Enabled;
     }
 }
